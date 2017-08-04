@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Header from './Header';
 import Order from './Order';
 import Inventory from './Inventory';
+import Fish from './Fish';
+import sampleFishes from '../sample-fishes';
 
 class App extends Component {
 	constructor(props) {
@@ -12,6 +14,10 @@ class App extends Component {
 		};
 		
 		this.addFish = this.addFish.bind(this);
+		this.loadSamples = this.loadSamples.bind(this);
+		this.addToOrder = this.addToOrder.bind(this);
+		this.updateFish = this.updateFish.bind(this);
+		this.removeFish = this.removeFish.bind(this);
 	}
 	
 	addFish(fish) {
@@ -21,14 +27,50 @@ class App extends Component {
 		this.setState({ fishes })
 	}
 
+	updateFish(key, fish) {
+		const fishes = {...this.state.fishes};
+		fishes[key] = fish;
+		this.setState({ fishes });
+	}
+
+	removeFish(key) {
+		const fishes = {...this.state.fishes};
+		this.setState({ fishes });
+	}
+
+	loadSamples() {
+		this.setState({
+			fishes: sampleFishes
+		})
+	}
+
+	addToOrder(key) {
+		const order = {...this.state.order};
+		order[key] = order[key] + 1 || 1;
+		this.setState({ order });
+	}
+
 	render() {
 		return (
 			<div className='catch-of-the-day'>
 				<div className="menu">
 					<Header tagline='Fresh Seafood Market'/>
+					<ul className="list-of-fishes">
+						{
+							Object
+								.keys(this.state.fishes)
+								.map(fish => <Fish key={fish} index={key} details={this.state.fishes[key]} addToOrder={this.addToOrder} />)
+						}
+					</ul>
 				</div>
-				<Order />
-				<Inventory addFish={this.addFish} />
+				<Order fishes={this.state.fishes} order={this.state.orders} />
+				<Inventory
+					addFish={this.addFish}
+					removeFish={this.removeFish}
+					loadSamples={this.loadSamples}
+					fishes={this.state.fishes}
+					updateFish={this.updateFish}
+				 />
 			</div>
 		);
 	}
